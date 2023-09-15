@@ -3,10 +3,10 @@ import { createPost, deletePost, getPosts, updatePost } from '../services/posts'
 import { Link } from 'react-router-dom';
 import { useAsync } from '../hooks/useAsync';
 import ReactPaginate from 'react-paginate';
-import './PostList.css'
 import Navbar from './Navbar.js';
 import AddPostForm from './AddPostForm';
-const PostList = () => {  
+import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
+const PostList = () => {
   const { loading, error, value: posts } = useAsync(getPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(3);
@@ -15,43 +15,44 @@ const PostList = () => {
   const [sortOption, setSortOption] = useState('rank');
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedBody, setUpdatedBody] = useState('');
-  const [editPostId, setEditPostId] = useState(null); 
+  const [editPostId, setEditPostId] = useState(null);
   useEffect(() => {
     const refreshEventListener = () => {
       console.log('Custom refresh event received.');
       window.location.reload();
     };
 
+
     window.addEventListener('custom-refresh-event', refreshEventListener);
 
     return () => {
       window.removeEventListener('custom-refresh-event', refreshEventListener);
     };
-  }, []); 
+  }, []);
   const handleSortChange = (event) => {
     console.log('Sorting option changed:', event.target.value);
     setSortOption(event.target.value);
   };
-  
-  
+
+
   const sortPosts = (sortedPosts, sortOption) => {
     if (sortOption === 'rank') {
-      return [...sortedPosts].sort((a, b) => b.rank - a.rank); 
+      return [...sortedPosts].sort((a, b) => b.rank - a.rank);
     } else if (sortOption === 'date') {
-      return [...sortedPosts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); 
+      return [...sortedPosts].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (sortOption === 'newest') {
       console.log("sortedPosts", sortedPosts);
       console.log([...sortedPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
-      sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); 
+      sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    
+
     return sortedPosts;
   };
   const handleEditClick = (postId) => {
     setEditPostId(postId);
-    
+
     const postToEdit = sortedPosts.find((post) => post._id === postId);
-    
+
     setUpdatedTitle(postToEdit.title);
     setUpdatedBody(postToEdit.body);
   };
@@ -64,11 +65,11 @@ const PostList = () => {
         title: updatedTitle,
         body: updatedBody,
       };
-  
+
       const response = await updatePost(updatedPost);
-  
+
       if (response.ok) {
-        setEditPostId(null); 
+        setEditPostId(null);
         setUpdatedTitle('');
         setUpdatedBody('');
       } else {
@@ -78,7 +79,7 @@ const PostList = () => {
       console.error('Error updating post:', error.message);
     }
   };
-  
+
 
   const handleCancelClick = () => {
     setEditPostId(null);
@@ -113,7 +114,7 @@ const PostList = () => {
         post.body.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-    return false; 
+    return false;
   });
   const pageCount = Math.ceil(filteredPosts.length / postsPerPage);
 
@@ -126,17 +127,25 @@ const PostList = () => {
       formData.append('title', newPost.title);
       formData.append('body', newPost.body);
       formData.append('image', newPost.image);
-      await createPost(newPost);
+      console.log('New Post Data:', newPost);
+      const response = await createPost(newPost);
 
-    } catch (error) {
-      console.error('Error adding post:', error);
+      if (response.ok) {
+        // Post created successfully, you can handle the response here
+        console.log('Post created successfully:', response.data);
+      } else {
+        console.error('Error creating post:', response.statusText);
+      }
+    }
+    catch (error) {
+      console.error('Error adding post:', error.message);
     }
   };
   const renderEditForm = (postId) => {
     console.log("is id", postId)
     if (editPostId === postId) {
       return (
-        <div className="edit-form">
+        <div>
           <input
             type="text"
             placeholder="New Title"
@@ -157,9 +166,9 @@ const PostList = () => {
   };
 
   const handleDeleteClick = (_id) => {
-    deletePost(_id) 
+    deletePost(_id)
       .then((response) => {
-        console.log(response.data); 
+        console.log(response.data);
       })
       .catch((error) => {
         console.error('Error deleting post:', error);
@@ -168,52 +177,91 @@ const PostList = () => {
   return (
     <>
       <Navbar />
-      <div className="post-list-container">
-        <AddPostForm onAddPost={handleAddPost} />
-
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-        <select
-          className="sort-dropdown"
-          value={sortOption}
-          onChange={handleSortChange}
-        >
-          <option value="rank">Sort by Rank</option>
-          <option value="date">Sort by Date (Oldest First)</option>
-        </select>
-
-        {fetchError ? (
-          <div className="error-msg">{fetchError}</div>
-        ) : (
-          postsToDisplay.map((post) => (
-            <div key={post._id} className="post-card">
-              <h1 className="post-title">
-                <Link to={`/posts/${post._id}`}>{post.title}</Link>
-              </h1>
-              {renderEditForm(post._id)} 
-              {editPostId !== post._id && (
-                <button onClick={() => handleEditClick(post._id)}>Edit</button>
+      <Container className="mt-4">
+        <Row>
+          <Col md={12}>
+            <Card className="p-4 mb-4 bg-dark">
+              <AddPostForm onAddPost={handleAddPost} />
+              <Form.Group>
+                <Form.Control
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="custom-input form-control bg-dark text-white"
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Control
+                  as="select"
+                  value={sortOption}
+                  onChange={handleSortChange}
+                  className="custom-input form-control bg-dark text-white"
+                >
+                  <option value="rank">Sort by Rank</option>
+                  <option value="date">Sort by Date (Oldest First)</option>
+                </Form.Control>
+              </Form.Group>
+              {fetchError ? (
+                <div className="error-msg">{fetchError}</div>
+              ) : (
+                <div>
+                  {postsToDisplay.map((post) => (
+                    <Card key={post._id} className="mb-3">
+                      <Card.Img
+                        variant="top"
+                        src={post.image}
+                        onError={(e) => {
+                          e.target.src = 'placeholder.jpg';
+                          e.target.onerror = null;
+                        }}
+                      />                      <Card.Body>
+                        <h5>
+                          <Link to={`/posts/${post._id}`}>{post.title}</Link>
+                        </h5>
+                        {renderEditForm(post._id)}
+                        {editPostId !== post._id && (
+                          <div className="btn-group">
+                            <Button
+                              variant="primary"
+                              onClick={() => handleEditClick(post._id)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDeleteClick(post._id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        )}
+                        <p>{post.body}</p>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
               )}
-              <p className="post-excerpt">{post.body}</p>
-            </div>
-          ))
-        )}
-        <ReactPaginate
-          previousLabel={'Previous'}
-          nextLabel={'Next'}
-          pageCount={pageCount}
-          onPageChange={handlePageChange}
-          containerClassName={'pagination'}
-          activeClassName={'active'}
-        />
-      </div>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+      <Container className="mt-4">
+        <Row>
+          <Col>
+            <ReactPaginate
+              previousLabel={'Previous'}
+              nextLabel={'Next'}
+              pageCount={pageCount}
+              onPageChange={handlePageChange}
+              containerClassName={'pagination'}
+              activeClassName={'active'}
+            />
+          </Col>
+        </Row>
+      </Container>
     </>
   );
-  
+
 };
 export default PostList

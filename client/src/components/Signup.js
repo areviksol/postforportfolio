@@ -46,10 +46,10 @@ const Signup = () => {
 	return (
 		<div className="bg-transparent-cool">
 			<Container>
-				<Row className="vh-100 justify-content-center align-items-center">
+				<Row className="vh-100  justify-content-center align-items-center">
 					<Col xs={12} md={6}>
 						<Form
-							className="form-cool-effect p-4 rounded bg-dark"
+							className="border form-cool-effect p-4 rounded bg-dark"
 							onSubmit={handleSubmit}
 						>
 							<div className="text-center mt-3">

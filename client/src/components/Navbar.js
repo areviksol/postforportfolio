@@ -1,4 +1,5 @@
-import "./Navbar.css"
+import { Button, Navbar as BootstrapNavbar } from 'react-bootstrap';
+
 const Navbar = () => {
 	const handleLogout = () => {
 		localStorage.removeItem("token");
@@ -6,15 +7,17 @@ const Navbar = () => {
 	};
 
 	return (
-		<div className='main_container'>
-			<nav className='navbar'>
-				<h1>posts</h1>
-				<button className='white_btn' onClick={handleLogout}>
-					Logout
-				</button>
-			</nav>
-		</div>
-	);
+		<BootstrapNavbar bg="dark" variant="dark">
+		  <BootstrapNavbar.Brand>
+			Posts
+		  </BootstrapNavbar.Brand>
+		  <BootstrapNavbar.Collapse className="justify-content-end">
+			<Button variant="danger" onClick={handleLogout}>
+			  <i className="fas fa-power-off"></i> Logout
+			</Button>
+		  </BootstrapNavbar.Collapse>
+		</BootstrapNavbar>
+	  );
 };
 
 export default Navbar;
