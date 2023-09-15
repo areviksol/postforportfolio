@@ -1,0 +1,16 @@
+.container {
+	display: flex;
+	flex-direction: column;
+}
+
+.green_btn {
+	border: none;
+	outline: none;
+	padding: 12px 0;
+	background-color: #3bb19b;
+	border-radius: 20px;
+	width: 180px;
+	font-weight: bold;
+	font-size: 14px;
+	cursor: pointer;
+}
