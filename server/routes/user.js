@@ -15,9 +15,10 @@ router.put('/:_id', userController.updateUser);
 
 router.delete('/:_id', userController.deleteUser);
 
-router.get("/:id/verify/:token/", async (req, res) => {
+router.get("/:_id/verify/:token", async (req, res) => {
+	console.log("hasa stex", req.params );
 	try {
-		const user = await User.findOne({ _id: req.params.id });
+		const user = await User.findOne({ _id: req.params._id });
 		if (!user) return res.status(400).send({ message: "Invalid link" });
 
 		const token = await Token.findOne({
@@ -28,11 +29,13 @@ router.get("/:id/verify/:token/", async (req, res) => {
 		if (!token) return res.status(400).send({ message: "Invalid link" });
 
 		await User.updateOne({ _id: user._id, verified: true });
-		await token.remove();
+		await token.deleteOne();
 
 		res.status(200).send({ message: "Email verified successfully" });
 	} catch (error) {
-		res.status(500).send({ message: "Internal Server Error" });
+		console.log(error.message);
+		res.status(500).send({ message: error.message });
 	}
 });
 export default router;
+

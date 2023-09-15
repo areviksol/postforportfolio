@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Joi from 'joi'
 import passwordComplexity from 'joi-password-complexity'
+import jwt from 'jsonwebtoken'
 const userSchema = new mongoose.Schema({
 	firstName: { type: String, required: true },
 	lastName: { type: String, required: true },

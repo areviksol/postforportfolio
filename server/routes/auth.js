@@ -2,10 +2,9 @@ import express from 'express';
 import * as commentController from '../controllers/comment.js';
 import User from '../models/User.js';
 import Token from '../models/Token.js';
-//sendEmail
+import bcrypt from'bcrypt'
 import crypto from 'crypto';
 import Joi from 'joi'
-
 
 const router = express.Router();
 
@@ -16,7 +15,7 @@ router.post("/", async (req, res) => {
 		if (error)
 			return res.status(400).send({ message: error.details[0].message });
 
-		const user = await User.findOne({ email: req.body.email, password: req.body.password });
+		const user = await User.findOne({ email: req.body.email });
 		if (!user)
 			return res.status(401).send({ message: "Invalid Email or Password" });
 
@@ -46,6 +45,8 @@ router.post("/", async (req, res) => {
 		const token = user.generateAuthToken();
 		res.status(200).send({ data: token, message: "logged in successfully" });
 	} catch (error) {
+		res.status(500).send({ message: error.message });
+
 		res.status(500).send({ message: "Internal Server Error" });
 	}
 });
