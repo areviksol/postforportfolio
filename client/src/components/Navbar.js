@@ -14,6 +14,7 @@ const Navbar = () => {
 		  <BootstrapNavbar.Collapse className="justify-content-end">
 			<Button variant="danger" onClick={handleLogout}>
 			  <i className="fas fa-power-off"></i> Logout
+			  <img src="data:image/jpeg;base64,{{user.image}}" alt="User Image"/>
 			</Button>
 		  </BootstrapNavbar.Collapse>
 		</BootstrapNavbar>

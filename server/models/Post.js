@@ -7,6 +7,7 @@ const postSchema = new mongoose.Schema({
   comments: [commentSchema],
   rank: Number,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+  image: { type: Buffer },
 });
 
 const Post = mongoose.model('Post', postSchema);

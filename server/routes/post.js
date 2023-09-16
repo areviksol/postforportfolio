@@ -1,6 +1,9 @@
 import express from 'express'
 import * as postController from '../controllers/post.js'
+import multer from "multer";
 
+const storage = multer.memoryStorage(); 
+const upload = multer({ storage });
 const router = express.Router();
 
 router.post('/', postController.createPost); 
@@ -16,6 +19,8 @@ router.delete('/:_id', postController.deletePost);
 router.get('/:_id/comments', postController.getCommentsByPostId); 
 
 router.put('/:postId/comments/:commentId', postController.updateComment)
+
+// router.get('/:postId/image', postController.getImageByPostId);
 
 router.post('/:postId/comments', postController.createComment)
 

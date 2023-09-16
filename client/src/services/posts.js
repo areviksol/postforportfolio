@@ -13,6 +13,7 @@ export function getPostPage(page, postsPerPage) {
 }
 
 export function createPost( {title, body, image} ) {
+  console.log("image is", image);
   return makeRequest(`/posts`, {
     method: "POST",
     data : {

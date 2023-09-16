@@ -2,7 +2,6 @@ import express from 'express';
 import * as userController from '../controllers/user.js';
 import User from '../models/User.js';
 import Token from '../models/Token.js';
-
 const router = express.Router();
 
 router.post('/', userController.createUser);

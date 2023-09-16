@@ -13,11 +13,29 @@ const AddPostForm = ({ onAddPost }) => {
   const handleBodyChange = (e) => {
     setBody(e.target.value);
   };
-
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
-    setImage(selectedImage);
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImage(e.target.result); // This sets the base64-encoded image in your component state
+      };
+      reader.readAsDataURL(selectedImage);
+    }
   };
+  // const handleImageChange = (e) => {
+  //   const selectedImage = e.target.files[0];
+  //   const reader = new FileReader();
+
+  //   reader.onload = (event) => {
+  //     const base64Image = event.target.result;
+
+  //     // Set the base64-encoded image data to the 'image' state
+  //     setImage(base64Image);
+  //   };
+
+  //   reader.readAsDataURL(selectedImage);  
+  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
