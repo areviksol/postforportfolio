@@ -20,10 +20,10 @@ const AddPostForm = ({ onAddPost }) => {
 
     if (selectedImage) {
       // Resize the selected image before uploading
-      const resizedImage = await resizeImage(selectedImage);
-      
-      setImage(resizedImage);
-      setImagePreview(URL.createObjectURL(resizedImage));
+      // const resizedImage = await resizeImage(selectedImage);
+
+      setImage(selectedImage);
+      setImagePreview(URL.createObjectURL(selectedImage));
     }
   };
 
@@ -73,17 +73,17 @@ const AddPostForm = ({ onAddPost }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Create a new post object with title, body, and image
     const newPost = {
       title,
       body,
       image,
     };
-    
+
     // Call the onAddPost function from the parent component
     onAddPost(newPost);
-    
+
     // Reset form fields
     setTitle('');
     setBody('');
@@ -104,8 +104,12 @@ const AddPostForm = ({ onAddPost }) => {
         value={body}
         onChange={handleBodyChange}
       />
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      {imagePreview && (
+      {!image && (
+        <div>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <p>Choose an image</p>
+        </div>
+      )}      {imagePreview && (
         <img
           src={imagePreview}
           alt="Image Preview"

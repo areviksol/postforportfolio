@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar.js';
 import AddPostForm from './AddPostForm';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
+
 const PostList = () => {
   const { loading, error, value: posts } = useAsync(getPosts);
   const [currentPage, setCurrentPage] = useState(1);
@@ -132,7 +133,6 @@ const PostList = () => {
       const response = await createPost(formData);
 
       if (response.ok) {
-        // Post created successfully, you can handle the response here
         console.log('Post created successfully:', response.data);
       } else {
         console.error('Error creating post:', response.statusText);
@@ -182,19 +182,6 @@ const PostList = () => {
     const blobUrl = URL.createObjectURL(blob);
     const imageSrc = blobUrl;
     return imageSrc
-    // console.log("image data is ----> ", imageData);
-    // const chunkSize = 1024; // Adjust the chunk size as needed
-    // const imageArray = Array.from(imageData);
-    // const chunks = [];
-    // for (let i = 0; i < imageArray.length; i += chunkSize) {
-    //   chunks.push(imageArray.slice(i, i + chunkSize));
-    // }
-    // const base64Chunks = chunks.map(chunk =>
-    //   btoa(String.fromCharCode.apply(null, chunk))
-    // );
-    // const base64Image = base64Chunks.join('');
-
-    // return `data:image/png;base64,${base64Image}`;
   };
 
   return (
@@ -232,7 +219,7 @@ const PostList = () => {
                   {postsToDisplay.map((post) => (
                     <Card key={post._id} className="mb-3">
                       <Card.Img
-                        style={{ width: '500px', height: '500px' }} 
+                        style={{ width: 'auto', height: 'auto' }} 
                         variant="top"
                         src={getPostImageSrc(post.image.data)}
                         onError={(e) => {

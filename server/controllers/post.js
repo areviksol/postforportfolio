@@ -19,7 +19,6 @@ export const createPost = async (req, res) => {
 
     // Process and store the image (resize, convert, etc.)
     const compressedImageBuffer = await sharp(image.buffer)
-      .resize(200, 200)
       .toBuffer();
 
     // Save the post with the processed image
