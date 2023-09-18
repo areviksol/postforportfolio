@@ -20,10 +20,10 @@ const AddPostForm = ({ onAddPost }) => {
 
     if (selectedImage) {
       // Resize the selected image before uploading
-      // const resizedImage = await resizeImage(selectedImage);
+      const resizedImage = await resizeImage(selectedImage);
       
-      setImage(selectedImage);
-      setImagePreview(URL.createObjectURL(selectedImage));
+      setImage(resizedImage);
+      setImagePreview(URL.createObjectURL(resizedImage));
     }
   };
 

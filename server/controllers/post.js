@@ -9,10 +9,10 @@ function getFileExtension(filename) {
   return path.extname(filename).toLowerCase();
 }
 export const createPost = async (req, res) => {
-  try {
+    try {
     const { title, body } = req.body;
     const image = req.file; // This will contain the uploaded file data
-
+    const imageBuffer = image.buffer;
     if (!image) {
       throw new Error('No image uploaded');
     }
@@ -26,7 +26,7 @@ export const createPost = async (req, res) => {
     const newPost = new Post({
       title,
       body,
-      image: compressedImageBuffer,
+      image: imageBuffer,
     });
 
     await newPost.save();
