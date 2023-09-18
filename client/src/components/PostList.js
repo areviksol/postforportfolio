@@ -180,14 +180,20 @@ const[refresh, setRefresh] = useState(true);
     return null;
   };
 
-  const handleDeleteClick = (_id) => {
-    deletePost(_id)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error('Error deleting post:', error);
-      });
+  const handleDeleteClick = async (_id) => {
+    try {
+      const response = await deletePost(_id);
+
+      if (response.ok) {
+        // Post deleted successfully, refresh the post list
+        refreshPosts();
+        console.log('Post deleted successfully:', response.data);
+      } else {
+        console.error('Error deleting post:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error.message);
+    }
   };
 
   const getPostImageSrc = (imageData) => {
@@ -232,6 +238,7 @@ const[refresh, setRefresh] = useState(true);
                 <div>
                   {postsToDisplay.map((post) => (
                     <Card key={post._id} className="mb-3">
+                      {post._id}
                       <Card.Img
                         style={{ width: 'auto', height: 'auto' }} 
                         variant="top"

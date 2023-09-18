@@ -32,7 +32,7 @@ export function updatePost( {title, body, _id} ) {
 }
 
 export function deletePost(_id) {
-  return makeRequest(`posts/${_id}}`, {
+  return makeRequest(`posts/${_id}`, {
     method: "DELETE",
   })
 }
