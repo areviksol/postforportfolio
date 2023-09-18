@@ -5,6 +5,7 @@ const AddPostForm = ({ onAddPost }) => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null); // State to store the image preview
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -18,7 +19,9 @@ const AddPostForm = ({ onAddPost }) => {
     if (selectedImage) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImage(e.target.result); // This sets the base64-encoded image in your component state
+        const imagePreviewData = e.target.result;
+        setImage(e.target.result);
+        setImagePreview(imagePreviewData); // This sets the base64-encoded image in your component state
       };
       reader.readAsDataURL(selectedImage);
     }
@@ -51,6 +54,8 @@ const AddPostForm = ({ onAddPost }) => {
     setTitle('');
     setBody('');
     setImage(null);
+    setImagePreview(null);
+
   };
 
   return (
@@ -67,6 +72,13 @@ const AddPostForm = ({ onAddPost }) => {
         onChange={handleBodyChange}
       />
       <input type="file" accept="image/*" onChange={handleImageChange} />
+      {imagePreview && (
+        <img
+          src={imagePreview}
+          alt="Image Preview"
+          className="image-preview"
+        />
+      )}
       <button type="submit">Add Post</button>
     </form>
   );
