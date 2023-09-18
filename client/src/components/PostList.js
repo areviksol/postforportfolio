@@ -175,6 +175,28 @@ const PostList = () => {
         console.error('Error deleting post:', error);
       });
   };
+
+  const getPostImageSrc = (imageData) => {
+    const uint8Array = new Uint8Array(imageData);
+    const blob = new Blob([uint8Array]);
+    const blobUrl = URL.createObjectURL(blob);
+    const imageSrc = blobUrl;
+    return imageSrc
+    // console.log("image data is ----> ", imageData);
+    // const chunkSize = 1024; // Adjust the chunk size as needed
+    // const imageArray = Array.from(imageData);
+    // const chunks = [];
+    // for (let i = 0; i < imageArray.length; i += chunkSize) {
+    //   chunks.push(imageArray.slice(i, i + chunkSize));
+    // }
+    // const base64Chunks = chunks.map(chunk =>
+    //   btoa(String.fromCharCode.apply(null, chunk))
+    // );
+    // const base64Image = base64Chunks.join('');
+
+    // return `data:image/png;base64,${base64Image}`;
+  };
+
   return (
     <>
       <Navbar />
@@ -212,7 +234,7 @@ const PostList = () => {
                       <Card.Img
                         style={{ width: '500px', height: '500px' }} 
                         variant="top"
-                        src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, post.image.data))}`}
+                        src={getPostImageSrc(post.image.data)}
                         onError={(e) => {
                           e.target.src = 'placeholder.jpg';
                           e.target.onerror = null;
