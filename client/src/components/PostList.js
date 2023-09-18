@@ -16,31 +16,19 @@ const PostList = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
-  const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]); 
-  const[l, setL] = useState(true);
+  const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]);
+  
+const[refresh, setRefresh] = useState(true);
   
   const refreshPosts = () => {
-    setL(!l)
-    fetchPosts();
+    setRefresh(!refresh)
   };
 
   useEffect(() => {
-    // Fetch posts when the component mounts
     fetchPosts();
-  }, [fetchPosts]);
-  useEffect(() => {
-    const refreshEventListener = () => {
-      console.log('Custom refresh event received.');
-      // When a custom refresh event occurs, fetch posts again
-      fetchPosts();
-    };
+    setRefresh(false);
+  }, [fetchPosts, refresh]);
 
-    window.addEventListener('custom-refresh-event', refreshEventListener);
-
-    return () => {
-      window.removeEventListener('custom-refresh-event', refreshEventListener);
-    };
-  }, [fetchPosts]);
   useEffect(() => {
     const refreshEventListener = () => {
       console.log('Custom refresh event received.');
@@ -157,6 +145,8 @@ const PostList = () => {
       const response = await createPost(formData);
       refreshPosts();
       if (response.ok) {
+        setRefresh(true);
+
         console.log('Post created successfully:', response.data);
       } else {
         console.error('Error creating post:', response.statusText);
@@ -299,4 +289,4 @@ const PostList = () => {
   );
 
 };
-export default PostList
+export default PostList 
