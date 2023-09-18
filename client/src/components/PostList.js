@@ -209,8 +209,9 @@ const PostList = () => {
                   {postsToDisplay.map((post) => (
                     <Card key={post._id} className="mb-3">
                       <Card.Img
+                        style={{ width: '300px', height: '200px' }} 
                         variant="top"
-                        src={post.image}
+                        src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, post.image.data))}`}
                         onError={(e) => {
                           e.target.src = 'placeholder.jpg';
                           e.target.onerror = null;
