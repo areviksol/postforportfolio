@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { createPost, deletePost, getPosts, updatePost } from '../services/posts';
 import { Link } from 'react-router-dom';
-import { useAsync } from '../hooks/useAsync';
+import { useAsync, useAsyncFn } from '../hooks/useAsync';
 import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar.js';
 import AddPostForm from './AddPostForm';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
 
 const PostList = () => {
-  const { loading, error, value: posts } = useAsync(getPosts);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(3);
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,6 +16,31 @@ const PostList = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
+  const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]); 
+  const[l, setL] = useState(true);
+  
+  const refreshPosts = () => {
+    setL(!l)
+    fetchPosts();
+  };
+
+  useEffect(() => {
+    // Fetch posts when the component mounts
+    fetchPosts();
+  }, [fetchPosts]);
+  useEffect(() => {
+    const refreshEventListener = () => {
+      console.log('Custom refresh event received.');
+      // When a custom refresh event occurs, fetch posts again
+      fetchPosts();
+    };
+
+    window.addEventListener('custom-refresh-event', refreshEventListener);
+
+    return () => {
+      window.removeEventListener('custom-refresh-event', refreshEventListener);
+    };
+  }, [fetchPosts]);
   useEffect(() => {
     const refreshEventListener = () => {
       console.log('Custom refresh event received.');
@@ -131,7 +155,7 @@ const PostList = () => {
       console.log('form data post Data:', newPost);
 
       const response = await createPost(formData);
-
+      refreshPosts();
       if (response.ok) {
         console.log('Post created successfully:', response.data);
       } else {
@@ -191,7 +215,7 @@ const PostList = () => {
         <Row>
           <Col md={12}>
             <Card className="p-4 mb-4 bg-dark">
-              <AddPostForm onAddPost={handleAddPost} />
+              <AddPostForm onAddPost={handleAddPost}/>
               <Form.Group>
                 <Form.Control
                   type="text"
