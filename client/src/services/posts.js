@@ -12,15 +12,11 @@ export function getPostPage(page, postsPerPage) {
   return makeRequest(`/posts/?_page=${page}&_limit=${postsPerPage}`)
 }
 
-export function createPost( {title, body, image} ) {
-  console.log("image is", image);
+export function createPost( formData) {
+  console.log("image is", formData.image);
   return makeRequest(`/posts`, {
     method: "POST",
-    data : {
-      title,
-      body, 
-      image,
-    }
+    data : formData
   })
 }
 

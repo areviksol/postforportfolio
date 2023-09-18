@@ -8,34 +8,20 @@ import path from 'path'
 function getFileExtension(filename) {
   return path.extname(filename).toLowerCase();
 }
-
 export const createPost = async (req, res) => {
   try {
-    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    const { title, body } = req.body;
+    const image = req.file; // This will contain the uploaded file data
 
-    const { title, body, image } = req.body;
-    
-    // Split the image data to get the base64 part
-    const imageData = req.body.image.split(',')[1];
-
-    // Use the extracted file extension
-    const fileExtension = getFileExtension(imageData);
-    console.log("fileExtension is   ", fileExtension);
-    // Decode the base64 image data
-    const imageBuffer = Buffer.from(imageData, 'base64');
-    console.log('Image Buffer:', imageBuffer);
-
-    const format = await imageType(imageBuffer);
-    // if (!allowedExtensions.includes(fileExtension)) {
-    //   console.log('Invalid image or unsupported format');
-    //   return res.status(400).json({ error: 'Invalid image or unsupported format' });
-    // }
+    if (!image) {
+      throw new Error('No image uploaded');
+    }
 
     // Process and store the image (resize, convert, etc.)
-    const compressedImageBuffer = await sharp(imageBuffer)
+    const compressedImageBuffer = await sharp(image.buffer)
       .resize(200, 200)
       .toBuffer();
-    
+
     // Save the post with the processed image
     const newPost = new Post({
       title,
@@ -52,6 +38,49 @@ export const createPost = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+// export const createPost = async (req, res) => {
+//   try {
+//     const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+
+//     const { title, body, image } = req.body;
+    
+//     // Split the image data to get the base64 part
+//     const imageData = req.body.image.split(',')[1];
+
+//     // Use the extracted file extension
+//     const fileExtension = getFileExtension(imageData);
+//     console.log("fileExtension is   ", fileExtension);
+//     // Decode the base64 image data
+//     const imageBuffer = Buffer.from(imageData, 'base64');
+//     console.log('Image Buffer:', imageBuffer);
+
+//     const format = await imageType(imageBuffer);
+//     // if (!allowedExtensions.includes(fileExtension)) {
+//     //   console.log('Invalid image or unsupported format');
+//     //   return res.status(400).json({ error: 'Invalid image or unsupported format' });
+//     // }
+
+//     // Process and store the image (resize, convert, etc.)
+//     const compressedImageBuffer = await sharp(imageBuffer)
+//       .resize(200, 200)
+//       .toBuffer();
+    
+//     // Save the post with the processed image
+//     const newPost = new Post({
+//       title,
+//       body,
+//       image: compressedImageBuffer,
+//     });
+
+//     await newPost.save();
+
+//     res.status(201).json(newPost);
+//     console.log('New post created successfully.');
+//   } catch (error) {
+//     console.error('Error creating post:', error);
+//     res.status(400).json({ error: error.message });
+//   }
+// };
 
 export const getPosts = async (req, res) => {
   try {

@@ -22,7 +22,6 @@ const PostList = () => {
       window.location.reload();
     };
 
-
     window.addEventListener('custom-refresh-event', refreshEventListener);
 
     return () => {
@@ -128,7 +127,9 @@ const PostList = () => {
       formData.append('body', newPost.body);
       formData.append('image', newPost.image);
       console.log('New Post Data:', newPost);
-      const response = await createPost(newPost);
+      console.log('form data post Data:', newPost);
+
+      const response = await createPost(formData);
 
       if (response.ok) {
         // Post created successfully, you can handle the response here
@@ -209,7 +210,7 @@ const PostList = () => {
                   {postsToDisplay.map((post) => (
                     <Card key={post._id} className="mb-3">
                       <Card.Img
-                        style={{ width: '300px', height: '200px' }} 
+                        style={{ width: '500px', height: '500px' }} 
                         variant="top"
                         src={`data:image/png;base64,${btoa(String.fromCharCode.apply(null, post.image.data))}`}
                         onError={(e) => {
