@@ -5,7 +5,7 @@ export function useAsync(func, dependencies = []) {
 
   useEffect(() => {
     execute()
-  }, [execute])
+  }, [dependencies])
 
   return state
 }

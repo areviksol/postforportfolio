@@ -8,6 +8,7 @@ const postSchema = new mongoose.Schema({
   rank: Number,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   image: { type: Buffer },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Post = mongoose.model('Post', postSchema);

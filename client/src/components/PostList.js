@@ -17,9 +17,9 @@ const PostList = () => {
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
   const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]);
-  
-const[refresh, setRefresh] = useState(true);
-  
+
+  const [refresh, setRefresh] = useState(true);
+
   const refreshPosts = () => {
     setRefresh(!refresh)
   };
@@ -57,7 +57,6 @@ const[refresh, setRefresh] = useState(true);
       console.log([...sortedPosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
       sortedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-
     return sortedPosts;
   };
   const handleEditClick = (postId) => {
@@ -107,8 +106,6 @@ const[refresh, setRefresh] = useState(true);
   if (error) {
     return <h1 className="error-msg">{error}</h1>;
   }
-
-
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected + 1);
@@ -185,7 +182,6 @@ const[refresh, setRefresh] = useState(true);
       const response = await deletePost(_id);
 
       if (response.ok) {
-        // Post deleted successfully, refresh the post list
         refreshPosts();
         console.log('Post deleted successfully:', response.data);
       } else {
@@ -197,11 +193,14 @@ const[refresh, setRefresh] = useState(true);
   };
 
   const getPostImageSrc = (imageData) => {
-    const uint8Array = new Uint8Array(imageData);
-    const blob = new Blob([uint8Array]);
-    const blobUrl = URL.createObjectURL(blob);
-    const imageSrc = blobUrl;
-    return imageSrc
+    if (imageData && imageData.data) {
+      const uint8Array = new Uint8Array(imageData.data);
+      const blob = new Blob([uint8Array]);
+      const blobUrl = URL.createObjectURL(blob);
+      return blobUrl;
+    } else {
+      return 'placeholder.jpg';
+    }
   };
 
   return (
@@ -211,7 +210,7 @@ const[refresh, setRefresh] = useState(true);
         <Row>
           <Col md={12}>
             <Card className="p-4 mb-4 bg-dark">
-              <AddPostForm onAddPost={handleAddPost}/>
+              <AddPostForm onAddPost={handleAddPost} />
               <Form.Group>
                 <Form.Control
                   type="text"
@@ -239,15 +238,18 @@ const[refresh, setRefresh] = useState(true);
                   {postsToDisplay.map((post) => (
                     <Card key={post._id} className="mb-3">
                       {post._id}
-                      <Card.Img
-                        style={{ width: 'auto', height: 'auto' }} 
-                        variant="top"
-                        src={getPostImageSrc(post.image.data)}
-                        onError={(e) => {
-                          e.target.src = 'placeholder.jpg';
-                          e.target.onerror = null;
-                        }}
-                      />                      <Card.Body>
+                      {post.image && post.image.data ? ( // Check if image data is available
+                        <Card.Img
+                          style={{ width: 'auto', height: 'auto' }}
+                          variant="top"
+                          src={getPostImageSrc(post.image)}
+                          onError={(e) => {
+                            e.target.src = 'placeholder.jpg'; // Provide the path to your placeholder image
+                            e.target.onerror = null;
+                          }}
+                        />
+                      ) : null}
+                      <Card.Body>
                         <h5>
                           <Link to={`/posts/${post._id}`}>{post.title}</Link>
                         </h5>

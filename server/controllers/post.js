@@ -12,17 +12,20 @@ export const createPost = async (req, res) => {
     try {
     const { title, body } = req.body;
     const image = req.file;
-    const imageBuffer = image.buffer;
-    if (!image) {
-      throw new Error('No image uploaded');
-    }
-    const compressedImageBuffer = await sharp(image.buffer)
+    let imageBuffer = null;
+    let resizedImage;
+    if (image) {
+      imageBuffer = image.buffer;
+      resizedImage = await sharp(image.buffer)
+      .resize({ width: 800 }) 
+      .jpeg({ quality: 90 })
       .toBuffer();
+    }  
 
     const newPost = new Post({
       title,
       body,
-      image: imageBuffer,
+      image: resizedImage,
     });
 
     await newPost.save();
@@ -43,6 +46,7 @@ export const getPosts = async (req, res) => {
     const startIndex = (page - 1) * limit;
 
     const operation = Post.find()
+      .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(limit);
 
@@ -51,6 +55,7 @@ export const getPosts = async (req, res) => {
     if (result && result.error) {
       return res.status(500).json({ error: result.message });
     }
+    console.log("result is ", result)
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
