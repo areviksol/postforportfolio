@@ -17,17 +17,16 @@ const PostList = () => {
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
   const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]);
-
   const [refresh, setRefresh] = useState(true);
-
   const refreshPosts = () => {
+    console.log('Refresh set to true');
     setRefresh(!refresh)
   };
 
   useEffect(() => {
     fetchPosts();
     setRefresh(false);
-  }, [fetchPosts, refresh]);
+  }, [refresh]);
 
   useEffect(() => {
     const refreshEventListener = () => {
@@ -78,8 +77,9 @@ const PostList = () => {
       };
 
       const response = await updatePost(updatedPost);
-
-      if (response.ok) {
+      refreshPosts();
+      setEditPostId(null);
+      if (response) {
         setEditPostId(null);
         setUpdatedTitle('');
         setUpdatedBody('');
@@ -138,16 +138,8 @@ const PostList = () => {
       formData.append('image', newPost.image);
       console.log('New Post Data:', newPost);
       console.log('form data post Data:', newPost);
-
       const response = await createPost(formData);
       refreshPosts();
-      if (response.ok) {
-        setRefresh(true);
-
-        console.log('Post created successfully:', response.data);
-      } else {
-        console.error('Error creating post:', response.statusText);
-      }
     }
     catch (error) {
       console.error('Error adding post:', error.message);
@@ -179,14 +171,8 @@ const PostList = () => {
 
   const handleDeleteClick = async (_id) => {
     try {
-      const response = await deletePost(_id);
-
-      if (response.ok) {
-        refreshPosts();
-        console.log('Post deleted successfully:', response.data);
-      } else {
-        console.error('Error deleting post:', response.statusText);
-      }
+      await deletePost(_id);
+      refreshPosts()
     } catch (error) {
       console.error('Error deleting post:', error.message);
     }
