@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { createPost, deletePost, getPosts, updatePost } from '../services/posts';
 import { Link } from 'react-router-dom';
 import { useAsync, useAsyncFn } from '../hooks/useAsync';
@@ -6,6 +7,11 @@ import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar.js';
 import AddPostForm from './AddPostForm';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
+import {
+  fetchPostsSuccess,
+  createPostSuccess,
+  updatePostSuccess,
+} from './actions';
 
 const PostList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,35 +22,32 @@ const PostList = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
-  const { loading, error, value: posts, execute: fetchPosts } = useAsyncFn(getPosts, [currentPage, sortOption]);
-  const [refresh, setRefresh] = useState(true);
-  const refreshPosts = () => {
-    console.log('Refresh set to true');
-    setRefresh(!refresh)
-  };
+  const dispatch = useDispatch();
 
+  const posts = useSelector((state) => state.posts);
+  const { loading, error, value: postsData, execute: fetchPosts } = useAsyncFn(
+    getPosts
+  );
+ useEffect(() => {
+    fetchPosts(currentPage, sortOption);
+  }, [currentPage, sortOption, dispatch]);
   useEffect(() => {
-    fetchPosts();
-    setRefresh(false);
-  }, [refresh]);
-
-  useEffect(() => {
-    const refreshEventListener = () => {
-      console.log('Custom refresh event received.');
-      window.location.reload();
-    };
-
-    window.addEventListener('custom-refresh-event', refreshEventListener);
-
-    return () => {
-      window.removeEventListener('custom-refresh-event', refreshEventListener);
-    };
-  }, []);
+    if (postsData) {
+      dispatch(fetchPostsSuccess(postsData));
+    }
+  }, [postsData]);
   const handleSortChange = (event) => {
     console.log('Sorting option changed:', event.target.value);
     setSortOption(event.target.value);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   const sortPosts = (sortedPosts, sortOption) => {
     if (sortOption === 'rank') {
@@ -77,7 +80,7 @@ const PostList = () => {
       };
 
       const response = await updatePost(updatedPost);
-      refreshPosts();
+      dispatch(updatePostSuccess(updatedPost));
       setEditPostId(null);
       if (response) {
         setEditPostId(null);
@@ -98,14 +101,6 @@ const PostList = () => {
     setUpdatedBody('');
   };
   const sortedPosts = Array.isArray(posts) ? sortPosts(posts, sortOption) : [];
-
-  if (loading) {
-    return <h1>Loading</h1>;
-  }
-
-  if (error) {
-    return <h1 className="error-msg">{error}</h1>;
-  }
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected + 1);
@@ -139,7 +134,7 @@ const PostList = () => {
       console.log('New Post Data:', newPost);
       console.log('form data post Data:', newPost);
       const response = await createPost(formData);
-      refreshPosts();
+      dispatch(createPostSuccess(newPost));
     }
     catch (error) {
       console.error('Error adding post:', error.message);
@@ -172,7 +167,6 @@ const PostList = () => {
   const handleDeleteClick = async (_id) => {
     try {
       await deletePost(_id);
-      refreshPosts()
     } catch (error) {
       console.error('Error deleting post:', error.message);
     }

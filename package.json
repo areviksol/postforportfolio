@@ -4,6 +4,8 @@
     "install": "^0.13.0",
     "npm": "^10.1.0",
     "react-bootstrap": "^2.8.0",
-    "sharp": "^0.32.5"
+    "react-redux": "^8.1.2",
+    "sharp": "^0.32.5",
+    "thunk": "^0.0.1"
   }
 }

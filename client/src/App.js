@@ -5,7 +5,7 @@ import Post from "./components/Post";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import EmailVerify from "./components/EmailVerify";
-import { Provider } from "react-redux";
+
 function App() {
   const user = localStorage.getItem("token");
 

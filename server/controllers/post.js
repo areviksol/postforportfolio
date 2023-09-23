@@ -113,8 +113,8 @@ export const deletePost = async (req, res) => {
     console.log("id is", req.params._id)
     const operation = Post.findByIdAndRemove(req.params._id);
     const result = await executeMongoOperation(operation);
-
     if (result.error) {
+      console.log('result is ', result)
       return res.status(500).json({ error: result.message });
     }
 
