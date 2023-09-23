@@ -134,7 +134,11 @@ const PostList = () => {
       console.log('New Post Data:', newPost);
       console.log('form data post Data:', newPost);
       const response = await createPost(formData);
-      dispatch(createPostSuccess(newPost));
+      const createdPost = response;
+      dispatch(createPostSuccess(createdPost));
+      console.log('image is ', newPost.image);
+      console.log('New Post Data (after dispatch):', newPost);
+      // dispatch(createPostSuccess(newPost));
     }
     catch (error) {
       console.error('Error adding post:', error.message);
@@ -173,10 +177,12 @@ const PostList = () => {
   };
 
   const getPostImageSrc = (imageData) => {
+    console.log('imagedata is ', imageData);
     if (imageData && imageData.data) {
       const uint8Array = new Uint8Array(imageData.data);
       const blob = new Blob([uint8Array]);
       const blobUrl = URL.createObjectURL(blob);
+      console.log('Generated Blob URL:', blobUrl);
       return blobUrl;
     } else {
       return 'placeholder.jpg';

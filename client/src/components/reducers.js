@@ -21,7 +21,7 @@ import {
 	  case CREATE_POST_SUCCESS:
 		return {
 		  ...state,
-		  posts: [...state.posts, action.payload],
+		  posts: [action.payload, ...state.posts, ],
 		};
 	  case UPDATE_POST_SUCCESS:
 		return {

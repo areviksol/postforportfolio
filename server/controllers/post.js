@@ -3,11 +3,8 @@ import Post from '../models/Post.js';
 import executeMongoOperation from '../util.js';
 import Comment from '../models/Comment.js';
 import sharp from 'sharp'
-import imageType from 'image-type'
 import path from 'path'
-function getFileExtension(filename) {
-  return path.extname(filename).toLowerCase();
-}
+
 export const createPost = async (req, res) => {
     try {
     const { title, body } = req.body;
