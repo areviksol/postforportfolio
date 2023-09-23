@@ -11,6 +11,7 @@ import {
   fetchPostsSuccess,
   createPostSuccess,
   updatePostSuccess,
+  deletePostSuccess,
 } from './actions';
 
 const PostList = () => {
@@ -80,7 +81,7 @@ const PostList = () => {
       };
 
       const response = await updatePost(updatedPost);
-      dispatch(updatePostSuccess(updatedPost));
+      dispatch(updatePostSuccess(response));
       setEditPostId(null);
       if (response) {
         setEditPostId(null);
@@ -170,7 +171,8 @@ const PostList = () => {
 
   const handleDeleteClick = async (_id) => {
     try {
-      await deletePost(_id);
+      const response = await deletePost(_id);
+      dispatch(deletePostSuccess(_id))
     } catch (error) {
       console.error('Error deleting post:', error.message);
     }
