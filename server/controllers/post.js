@@ -36,6 +36,7 @@ export const createPost = async (req, res) => {
 };
 
 export const getPosts = async (req, res) => {
+  console.log("111");
   try {
     const page = parseInt(req.query._page);
     const limit = parseInt(req.query._limit) || 10;
@@ -53,6 +54,7 @@ export const getPosts = async (req, res) => {
       return res.status(500).json({ error: result.message });
     }
     console.log("result is ", result)
+
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

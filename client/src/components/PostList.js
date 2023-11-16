@@ -49,8 +49,12 @@ const PostList = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+  if (!postsData) {
+    return <div>No posts found.</div>;
+  }
 
   const sortPosts = (sortedPosts, sortOption) => {
+    
     if (sortOption === 'rank') {
       return [...sortedPosts].sort((a, b) => b.rank - a.rank);
     } else if (sortOption === 'date') {
@@ -62,6 +66,7 @@ const PostList = () => {
     }
     return sortedPosts;
   };
+
   const handleEditClick = (postId) => {
     setEditPostId(postId);
 
@@ -113,14 +118,18 @@ const PostList = () => {
   };
 
   const filteredPosts = sortedPosts.filter((post) => {
-    if (post && post.title && post.body) {
+    if (post ?? post.title ?? post.body) {
       return (
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         post.body.toLowerCase().includes(searchQuery.toLowerCase())
       );
+    }else {
+      return [];
     }
-    return false;
-  });
+    // return false;
+  }
+    
+  );
   const pageCount = Math.ceil(filteredPosts.length / postsPerPage);
 
   const startIndex = (currentPage - 1) * postsPerPage;
