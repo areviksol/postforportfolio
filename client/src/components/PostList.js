@@ -7,6 +7,7 @@ import ReactPaginate from 'react-paginate';
 import Navbar from './Navbar.js';
 import AddPostForm from './AddPostForm';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
+import Fuse from 'fuse.js';
 import {
   fetchPostsSuccess,
   createPostSuccess,
@@ -24,7 +25,12 @@ const PostList = () => {
   const [updatedBody, setUpdatedBody] = useState('');
   const [editPostId, setEditPostId] = useState(null);
   const dispatch = useDispatch();
-
+  const fuseOptions = {
+    keys: ['title', 'body'],
+    threshold: 0.3,
+  };
+  
+  
   const posts = useSelector((state) => state.posts);
   const { loading, error, value: postsData, execute: fetchPosts } = useAsyncFn(
     getPosts
@@ -116,17 +122,15 @@ const PostList = () => {
     setSearchQuery(event.target.value);
     setCurrentPage(1);
   };
+  const fuse = new Fuse(sortedPosts, fuseOptions);
 
   const filteredPosts = sortedPosts.filter((post) => {
-    if (post ?? post.title ?? post.body) {
-      return (
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.body.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }else {
-      return [];
+    if (!searchQuery.trim()) {
+      return true; // Show all posts when search query is empty
     }
-    // return false;
+    
+    const result = fuse.search(searchQuery.toLowerCase());
+    return result.some((item) => item.item === post);
   }
     
   );
